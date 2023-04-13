@@ -5,7 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"math/big"
+	"net"
+	"net/http"
+	netURL "net/url"
 	"sync"
 	"time"
 
@@ -46,10 +50,41 @@ type CommonTransaction interface {
 
 // NewEVMClient creates a client for EVMChain with provided signer
 func NewEVMClient(url string, signer Signer) (*EVMClient, error) {
-	rpcClient, err := rpc.DialContext(context.TODO(), url)
+	proxyURL, err := netURL.Parse("socks5://127.0.0.1:9150")
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
+
+	_ = proxyURL
+
+	customizedTransport := &http.Transport{
+		// Proxy: ProxyFromEnvironment,
+		Proxy: func(req *http.Request) (*netURL.URL, error) {
+			return netURL.Parse("socks5://127.0.0.1:9151")
+		},
+		DialContext: (&net.Dialer{
+			Timeout:   30 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}).DialContext,
+		ForceAttemptHTTP2:     true,
+		MaxIdleConns:          100,
+		IdleConnTimeout:       90 * time.Second,
+		TLSHandshakeTimeout:   10 * time.Second,
+		ExpectContinueTimeout: 1 * time.Second,
+	}
+
+	rpcClient, err := rpc.DialHTTPWithClient(url, &http.Client{
+		Transport: customizedTransport,
+		Timeout:   30 * time.Second,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// rpcClient, err := rpc.DialContext(context.TODO(), url)
+	// if err != nil {
+	// 	return nil, err
+	// }
 	c := &EVMClient{}
 	c.Client = ethclient.NewClient(rpcClient)
 	c.gethClient = gethclient.New(rpcClient)
