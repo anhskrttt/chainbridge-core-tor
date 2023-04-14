@@ -3,59 +3,14 @@
 version: '3'
 
 services:
-  evm1-1:
-    build:
-      context: ./geth-build
-      dockerfile: Dockerfile
-    container_name: evm1-1
-    logging:
-      driver: none
-    ports:
-      - "8545:8545"
-      - "8546:8546"
-    environment:
-      - NODEKEY=98ab333347a12cef869f92b3de44085f9e44891e513bcf1d76a99eecbcdd5e17
-      - NETWORKID=1
-      - MINE=true
-    entrypoint: "/root/entrypoint.sh"
-
-  # SECOND CHAIN
-  evm2-1:
-    build:
-      context: ./geth-build
-      dockerfile: Dockerfile
-    container_name: evm2-1
-    logging:
-      driver: none
-    ports:
-      - "8547:8545"
-      - "8548:8546"
-    environment:
-      - NODEKEY=98ab333347a12cef869f92b3de44085f9e44891e513bcf1d76a99eecbcdd5e17
-      - NETWORKID=2
-      - MINE=true
-    entrypoint: "/root/entrypoint.sh"
-
-  setup:
-    container_name: setup
-    build:
-      context: ../.
-      dockerfile: ./example/Dockerfile
-    command: local-setup --endpoint1 ws://evm1-1:8546 --endpoint2 ws://evm2-1:8546
-    depends_on:
-      - evm1-1
-      - evm2-1
-    restart: "no"
 
   relayer1:
     container_name: relayer1
     build:
       context: ../.
       dockerfile: ./example/Dockerfile
-    command: run --config /cfg/config_evm-evm_1.json --fresh
-    depends_on:
-      - evm1-1
-      - evm2-1
+    command:
+      run --config /cfg/config_evm-evm_1.json --latest
     volumes:
       - ./cfg:/cfg
     restart: always
@@ -65,10 +20,8 @@ services:
     build:
       context: ../.
       dockerfile: ./example/Dockerfile
-    command: run --config /cfg/config_evm-evm_2.json --fresh
-    depends_on:
-      - evm1-1
-      - evm2-1
+    command:
+      run --config /cfg/config_evm-evm_2.json --latest
     volumes:
       - ./cfg:/cfg
     restart: always
@@ -78,23 +31,94 @@ services:
     build:
       context: ../.
       dockerfile: ./example/Dockerfile
-    command: run --config /cfg/config_evm-evm_3.json --fresh
-    depends_on:
-      - evm1-1
-      - evm2-1
+    command:
+      run --config /cfg/config_evm-evm_3.json --latest
     volumes:
       - ./cfg:/cfg
     restart: always
 
-  otel-collector:
-    container_name: otel-collector
-    image: otel/opentelemetry-collector
-    command: ["--config=/etc/otel-collector-config.yml"]
+  relayer4:
+    container_name: relayer4
+    build:
+      context: ../.
+      dockerfile: ./example/Dockerfile
+    command:
+      run --config /cfg/config_evm-evm_4.json --latest
     volumes:
-      - ./cfg/otel-collector-config.yml:/etc/otel-collector-config.yml
-    ports:
-      - "8889:8889"   # Prometheus exporter metrics
+      - ./cfg:/cfg
+    restart: always
 
-networks:
-  evm2:
-  evm1:
+  relayer5:
+    container_name: relayer5
+    build:
+      context: ../.
+      dockerfile: ./example/Dockerfile
+    command:
+      run --config /cfg/config_evm-evm_5.json --latest
+    volumes:
+      - ./cfg:/cfg
+    restart: always
+
+  relayer6:
+    container_name: relayer6
+    build:
+      context: ../.
+      dockerfile: ./example/Dockerfile
+    command:
+      run --config /cfg/config_evm-evm_6.json --latest
+    volumes:
+      - ./cfg:/cfg
+    restart: always
+
+  relayer7:
+    container_name: relayer7
+    build:
+      context: ../.
+      dockerfile: ./example/Dockerfile
+    command:
+      run --config /cfg/config_evm-evm_7.json --latest
+    volumes:
+      - ./cfg:/cfg
+    restart: always
+
+  relayer8:
+    container_name: relayer8
+    build:
+      context: ../.
+      dockerfile: ./example/Dockerfile
+    command:
+      run --config /cfg/config_evm-evm_8.json --latest
+    volumes:
+      - ./cfg:/cfg
+    restart: always
+
+  relayer9:
+    container_name: relayer9
+    build:
+      context: ../.
+      dockerfile: ./example/Dockerfile
+    command:
+      run --config /cfg/config_evm-evm_9.json --latest
+    volumes:
+      - ./cfg:/cfg
+    restart: always
+
+  relayer10:
+    container_name: relayer10
+    build:
+      context: ../.
+      dockerfile: ./example/Dockerfile
+    command:
+      run --config /cfg/config_evm-evm_10.json --latest
+    volumes:
+      - ./cfg:/cfg
+    restart: always
+
+  # otel-collector:
+  #   container_name: otel-collector
+  #   image: otel/opentelemetry-collector
+  #   command: ["--config=/etc/otel-collector-config.yml"]
+  #   volumes:
+  #     - ./cfg/otel-collector-config.yml:/etc/otel-collector-config.yml
+  #   ports:
+  #     - "8889:8889"   # Prometheus exporter metrics

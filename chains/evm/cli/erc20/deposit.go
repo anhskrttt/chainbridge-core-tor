@@ -3,12 +3,14 @@ package erc20
 import (
 	"fmt"
 	"math/big"
+	"time"
 
 	callsUtil "github.com/ChainSafe/chainbridge-core/chains/evm/calls"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/calls/contracts/bridge"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/calls/evmtransaction"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/calls/transactor"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/cli/initialize"
+	"github.com/ChainSafe/chainbridge-core/evaluate"
 	"github.com/ChainSafe/chainbridge-core/util"
 
 	"github.com/ChainSafe/chainbridge-core/chains/evm/cli/flags"
@@ -98,6 +100,8 @@ func ProcessDepositFlags(cmd *cobra.Command, args []string) error {
 }
 
 func DepositCmd(cmd *cobra.Command, args []string, contract *bridge.BridgeContract) error {
+
+	// evaluate.SetT0(0, time.Now()) // Trigger deposit
 	hash, err := contract.Erc20Deposit(
 		RecipientAddress, RealAmount, ResourceIdBytesArr,
 		uint8(DomainID), transactor.TransactOptions{GasLimit: gasLimit, Priority: transactor.TxPriorities[Priority]},
@@ -106,6 +110,8 @@ func DepositCmd(cmd *cobra.Command, args []string, contract *bridge.BridgeContra
 		log.Error().Err(fmt.Errorf("erc20 deposit error: %v", err))
 		return err
 	}
+
+	evaluate.SetT0a(0, hash.Hex(), time.Now()) // Finish deposit
 
 	log.Info().Msgf(
 		"%s tokens were transferred to %s from %s with hash %s",
