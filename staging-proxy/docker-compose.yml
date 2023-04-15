@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  proxy-service:
+    image: wernight/dante
+    environment:
+      SOCKD_PORT: 1080
+      SOCKD_USER_NAME: danteuser
+      SOCKD_USER_PASSWORD: danteuser
+    ports:
+      - "1080:1080"
+    volumes:
+      - ./danted.conf:/etc/danted.conf
+    networks:
+      - proxy-net
+    restart: always
+
+  relayer1:
+    container_name: relayer1-dante
+    build:
+      context: ../.
+      dockerfile: ./docker/Dockerfile.bridge
+    command:
+      run --config /cfg/config_evm-evm_1.json --latest
+    volumes:
+      - ./cfg:/cfg
+    restart: always
+    depends_on:
+      - proxy-service
+    environment:
+      - http_proxy=socks5://proxy-service:1080
+      - https_proxy=socks5://proxy-service:1080
+    # environment:
+    #   # set up proxy configuration for your service
+    #   HTTP_PROXY: http://proxy-service:8128
+    #   HTTPS_PROXY: http://proxy-service:8128
+    networks:
+      - proxy-net
+
+  # relayer2:
+  #   container_name: relayer2
+  #   build:
+  #     context: ../.
+  #     dockerfile: ./docker/Dockerfile.bridge
+  #   command:
+  #     run --config /cfg/config_evm-evm_2.json --latest
+  #   volumes:
+  #     - ./cfg/:/cfg
+  #   restart: always
+
+networks:
+  proxy-net:

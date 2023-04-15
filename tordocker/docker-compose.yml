@@ -1,19 +1,38 @@
 # Copyright 2020 ChainSafe Systems
 # SPDX-License-Identifier: LGPL-3.0-only
 version: '3'
-
 services:
+  tor:
+    container_name: tor-service
+    image: osminogin/tor-simple
+    ports:
+      - "9050:9050"
+    volumes:
+      - tor-data:/data
+    restart: always
 
   relayer1:
     container_name: relayer1
     build:
       context: ../.
-      dockerfile: ./example/Dockerfile
+      dockerfile: ./tordocker/Dockerfile.bridge
     command:
       run --config /cfg/config_evm-evm_1.json --latest
     volumes:
       - ./cfg:/cfg
     restart: always
+    # depends_on:
+    #   - tor
+    environment:
+      - http_proxy=socks5://tor-service:9050
+      - https_proxy=socks5://tor-service:9050
+    depends_on:
+      - tor
+    
+volumes:
+  tor-data:
+
+
 
   # relayer2:
   #   container_name: relayer2
@@ -122,3 +141,5 @@ services:
   #     - ./cfg/otel-collector-config.yml:/etc/otel-collector-config.yml
   #   ports:
   #     - "8889:8889"   # Prometheus exporter metrics
+
+

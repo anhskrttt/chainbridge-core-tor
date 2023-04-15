@@ -1,5 +1,7 @@
 #!/bin/bash
 
+pwd
+
 # Stop all running containers
 docker stop $(docker ps -aq)
 
