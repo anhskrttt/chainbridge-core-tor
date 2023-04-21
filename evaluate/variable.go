@@ -10,6 +10,9 @@ var T2a time.Time // Finish vote - threshold met
 var T3 time.Time  // Finish Execute
 var T4 time.Time  // Received func
 
+var TStep1 time.Duration
+var TStep2 time.Duration
+
 var IsMet = false
 
 var currDepositHash string

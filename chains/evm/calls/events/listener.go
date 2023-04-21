@@ -4,10 +4,8 @@ import (
 	"context"
 	"math/big"
 	"strings"
-	"time"
 
 	"github.com/ChainSafe/chainbridge-core/chains/evm/calls/consts"
-	"github.com/ChainSafe/chainbridge-core/evaluate"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	ethTypes "github.com/ethereum/go-ethereum/core/types"
@@ -45,7 +43,7 @@ func (l *Listener) FetchDeposits(ctx context.Context, contractAddress common.Add
 			continue
 		}
 
-		evaluate.SetT1(d.DepositNonce, dl.TxHash.Hex() ,time.Now()) // Get Deposit
+		// evaluate.SetT1(d.DepositNonce, dl.TxHash.Hex() ,time.Now()) // Get Deposit
 
 		d.SenderAddress = common.BytesToAddress(dl.Topics[1].Bytes())
 		log.Debug().Msgf("Found deposit log in block: %d, TxHash: %s, contractAddress: %s, sender: %s", dl.BlockNumber, dl.TxHash, dl.Address, d.SenderAddress)

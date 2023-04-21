@@ -7,7 +7,8 @@ cd ..
 source config.env
 
 # run command multiple times
-for i in {1..50}; do
+for i in {1..100}; do
+  echo "i: $i"
   ./bridge-cli evm-cli erc20 deposit \
   --url $SRC_GATEWAY \
   --private-key $USER_1_PRIVATE_KEY \

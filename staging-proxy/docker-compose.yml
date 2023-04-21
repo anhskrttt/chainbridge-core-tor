@@ -1,19 +1,20 @@
 version: '3'
 
 services:
-  proxy-service:
-    image: wernight/dante
-    environment:
-      SOCKD_PORT: 1080
-      SOCKD_USER_NAME: danteuser
-      SOCKD_USER_PASSWORD: danteuser
-    ports:
-      - "1080:1080"
-    volumes:
-      - ./danted.conf:/etc/danted.conf
-    networks:
-      - proxy-net
-    restart: always
+  # proxy-service:
+  #   container_name: proxy-service
+  #   image: wernight/dante
+  #   environment:
+  #     SOCKD_PORT: 1080
+  #     SOCKD_USER_NAME: danteuser
+  #     SOCKD_USER_PASSWORD: danteuser
+  #   ports:
+  #     - "1080:1080"
+  #   volumes:
+  #     - ./danted.conf:/etc/danted.conf
+  #   networks:
+  #     - proxy-net
+  #   restart: always
 
   relayer1:
     container_name: relayer1-dante
@@ -25,17 +26,17 @@ services:
     volumes:
       - ./cfg:/cfg
     restart: always
-    depends_on:
-      - proxy-service
+    # depends_on:
+    #   - proxy-service
     environment:
-      - http_proxy=socks5://proxy-service:1080
-      - https_proxy=socks5://proxy-service:1080
+      - http_proxy=socks5://khubmomd:8jy0lxt2nnfl@209.35.4.10:5401
+      - https_proxy=socks5://khubmomd:8jy0lxt2nnfl@209.35.4.10:5401
     # environment:
     #   # set up proxy configuration for your service
     #   HTTP_PROXY: http://proxy-service:8128
     #   HTTPS_PROXY: http://proxy-service:8128
-    networks:
-      - proxy-net
+    # networks:
+    #   - proxy-net
 
   # relayer2:
   #   container_name: relayer2
@@ -48,5 +49,5 @@ services:
   #     - ./cfg/:/cfg
   #   restart: always
 
-networks:
-  proxy-net:
+# networks:
+#   proxy-net:

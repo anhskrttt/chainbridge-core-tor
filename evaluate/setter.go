@@ -4,53 +4,54 @@ import (
 	"time"
 )
 
-func SetT0(depositNonce uint64, txHash string, t time.Time) {
+func SetT0(t time.Time) {
 	T0 = t
-	WriteBreakToFile()
-	WriteBreakToFileEvaluate()
+	// WriteBreakToFile()
+	// WriteBreakToFileEvaluate()
 
-	WriteToFile("T0 (Trigger deposit): %s", T0)
+	// WriteToFile("T0:%s\n", T0)
+	WriteToFileWithCustomPath("./../evaluate-logs/log.txt", "T0 %s\n", T0)
 	// WriteToFileEvaluate("T0 %s", T0)
 }
 
-func SetT0a(depositNonce uint64, txHash string, t time.Time) {
-	T0a = t
+// func SetT0a(depositNonce uint64, txHash string, t time.Time) {
+// 	T0a = t
 
-	WriteToFile("T0a (Finish deposit): %s", t)
-	WriteToFileEvaluate("%d %s T0a %s", depositNonce, txHash, T0a)
+// 	WriteToFile("T0a (Finish deposit): %s", t)
+// 	WriteToFileEvaluate("%d %s T0a %s", depositNonce, txHash, T0a)
 
-	// if !T0.IsZero() {
-	// 	WriteBreakToFileEvaluate()
-	// 	WriteToFileEvaluate("Step 0 (finish deposit): %s", T0a.Sub(T0))
-	// }
+// 	// if !T0.IsZero() {
+// 	// 	WriteBreakToFileEvaluate()
+// 	// 	WriteToFileEvaluate("Step 0 (finish deposit): %s", T0a.Sub(T0))
+// 	// }
 
-}
+// }
 
-func SetT1(depositNonce uint64, txHash string, t time.Time) {
-	T1 = t
+// func SetT1(depositNonce uint64, txHash string, t time.Time) {
+// 	T1 = t
 
-	WriteToFile("T1 (Relayer caught deposit event): %s", t)
-	WriteToFileEvaluate("%d %s T1 %s", depositNonce, txHash, T1)
+// 	WriteToFile("T1 (Relayer caught deposit event): %s", t)
+// 	WriteToFileEvaluate("%d %s T1 %s", depositNonce, txHash, T1)
 
-	// if !T0a.IsZero() {
-	// 	WriteBreakToFileEvaluate()
-	// 	WriteToFileEvaluate("Step 0 (finish deposit): %s", T1.Sub(T0a))
-	// }
-}
+// 	// if !T0a.IsZero() {
+// 	// 	WriteBreakToFileEvaluate()
+// 	// 	WriteToFileEvaluate("Step 0 (finish deposit): %s", T1.Sub(T0a))
+// 	// }
+// }
 
-func SetT2(depositNonce uint64, txHash string, t time.Time) {
-	T2 = t
+// func SetT2(depositNonce uint64, txHash string, t time.Time) {
+// 	T2 = t
 
-	WriteToFile("T2 (Trigger/Start vote): %s", t)
-	// WriteToFileEvaluate("T2 %s", T2)
-}
+// 	WriteToFile("T2 (Trigger/Start vote): %s", t)
+// 	// WriteToFileEvaluate("T2 %s", T2)
+// }
 
-func SetT2a(depositNonce uint64, txHash string, t time.Time) {
-	T2 = t
+// func SetT2a(depositNonce uint64, txHash string, t time.Time) {
+// 	T2 = t
 
-	WriteToFile("T2 (Trigger/Start vote): %s", t)
-	// WriteToFileEvaluate("T2a %s", T2a)
-}
+// 	WriteToFile("T2 (Trigger/Start vote): %s", t)
+// 	// WriteToFileEvaluate("T2a %s", T2a)
+// }
 
 // func SetT2a(t time.Time) {
 // 	T2a = t
@@ -62,11 +63,23 @@ func SetT2a(depositNonce uint64, txHash string, t time.Time) {
 // 	WriteToFile("This is the last vote -> executing ... (T2a): %s", T2)
 // }
 
-func SetT3(depositNonce uint64, txHash string, t time.Time) {
+// Original
+// func SetT3(depositNonce uint64, txHash string, t time.Time) {
+// 	T3 = t
+
+// 	WriteToFileWithCustomPath("./../example/log_new.txt", "T3 (Finish execute - Executed): %s", T3)
+// 	WriteToFileEvaluateWithCustomPath("%d %s T3 %s", depositNonce, txHash, T3)
+
+// 	// if !T1.IsZero() && IsMet {
+// 	// 	WriteToFileEvaluateWithCustomPath("Step 3 (first vote until executed successfully - threshold met): %s", T3.Sub(T1))
+// 	// }
+// }
+
+func SetT3(t time.Time) {
 	T3 = t
 
-	WriteToFileWithCustomPath("./../example/log_new.txt", "T3 (Finish execute - Executed): %s", T3)
-	WriteToFileEvaluateWithCustomPath("%d %s T3 %s", depositNonce, txHash, T3)
+	WriteToFileWithCustomPath("./../evaluate-logs/log.txt", "T3 %s\n", T3)
+	// WriteToFileEvaluateWithCustomPath("T3:%s", T3)
 
 	// if !T1.IsZero() && IsMet {
 	// 	WriteToFileEvaluateWithCustomPath("Step 3 (first vote until executed successfully - threshold met): %s", T3.Sub(T1))
@@ -85,4 +98,14 @@ func SetIsMet(value bool) {
 
 func SetCurrDepositHash(value string) {
 	currDepositHash = value
+}
+
+func SetTStep1(rpcID int64, value time.Duration) {
+	// WriteToFileWithCustomPath("S1: %d\n", uint64(value.Milliseconds()))
+	WriteToFileWithCustomPath("./../evaluate-logs/log.txt", "S1 %d %d\n", rpcID, uint64(value.Milliseconds()))
+}
+
+func SetTStep2(value time.Duration) {
+	// WriteToFileWithCustomPath("S1: %d\n", uint64(value.Milliseconds()))
+	WriteToFileWithCustomPath("./../evaluate-logs/log.txt", "S2 %d %d\n", -1, uint64(value.Milliseconds()))
 }

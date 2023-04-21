@@ -134,16 +134,18 @@ func (v *EVMVoter) Execute(m *message.Message) error {
 		return err
 	}
 
-	evaluate.SetT2(prop.DepositNonce, "0", time.Now()) // Trigger Vote
+	//evaluate.SetT2(prop.DepositNonce, "0", time.Now()) // Trigger Vote
+	start := time.Now()
 	hash, err := v.bridgeContract.VoteProposal(prop, transactor.TransactOptions{Priority: prop.Metadata.Priority})
 	if err != nil {
 		log.Error().Err(err).Msgf("voting for proposal %+v failed", prop)
 		return fmt.Errorf("voting failed. Err: %w", err)
 	}
+	evaluate.SetTStep2(time.Since(start))
 
 	// Check if enough vote
 
-	evaluate.SetT2a(prop.DepositNonce, hash.Hex(), time.Now()) // Finish Vote
+	//evaluate.SetT2a(prop.DepositNonce, hash.Hex(), time.Now()) // Finish Vote
 	log.Debug().Str("hash", hash.String()).Uint64("nonce", prop.DepositNonce).Msgf("Voted")
 	// isMet, err := v.IsThresholdMet(prop)
 	// if err != nil {

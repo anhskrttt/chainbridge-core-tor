@@ -68,6 +68,7 @@ func (l *EVMListener) ListenToEvents(ctx context.Context, startBlock *big.Int, m
 		case <-ctx.Done():
 			return
 		default:
+			
 			head, err := l.client.LatestBlock()
 			if err != nil {
 				l.log.Error().Err(err).Msg("Unable to get latest block")

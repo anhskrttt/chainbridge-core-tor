@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/big"
 	"strings"
 	"time"
 
@@ -77,16 +78,25 @@ func main() {
 			}
 
 			if event.Status == 3 {
+				block, err := client.BlockByNumber(context.Background(), big.NewInt(int64(vLog.BlockNumber)))
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				timestamp := time.Unix(int64(block.Time()), 0)
+				evaluate.SetT3(timestamp)
+
 				// data := event.DataHash[:]
-				// originDomainID := data[0]
+				// originDomainID := data[0]a
 				// depositNonce := binary.BigEndian.Uint64(data[1:9])
 				// status := data[9]
 				// dataHash := data[10:]
 
 				// fmt.Printf("originDomainID: %d\ndepositNonce: %d\nstatus: %d\ndataHash: %x\n", originDomainID, depositNonce, status, dataHash)
 
-				start := time.Now()
-				evaluate.SetT3(event.DepositNonce, vLog.TxHash.Hex(), start)
+				// start := time.Now()
+				// evaluate.SetT3(event.DepositNonce, vLog.TxHash.Hex(), start)
+
 				fmt.Printf("ProposalEvent executed: originDomainID=%v, depositNonce=%v, status=%v, dataHash=%v\n",
 					event.OriginDomainID, event.DepositNonce, event.Status, hexutil.Encode(event.DataHash[:]))
 			}

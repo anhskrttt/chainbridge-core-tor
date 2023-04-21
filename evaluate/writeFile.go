@@ -6,7 +6,7 @@ import (
 )
 
 func WriteToFile(format string, v ...interface{}) {
-	file, err := os.OpenFile("log_new.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	file, err := os.OpenFile("evaluate_log.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -17,6 +17,24 @@ func WriteToFile(format string, v ...interface{}) {
 
 	// // Remove the default date and time from the go log output
 	// log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
+
+	// Log a message with a formatted string
+	log.Printf(format, v...)
+
+}
+
+func WriteToFileWithCustomPath(path string, format string, v ...interface{}) {
+	file, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	// Set log output to the file
+	log.SetOutput(file)
+
+	// Remove the default date and time from the go log output
+	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
 	// Log a message with a formatted string
 	log.Printf(format, v...)
@@ -61,24 +79,6 @@ func WriteToFileEvaluateWithCustomPath(format string, v ...interface{}) {
 
 }
 
-func WriteToFileWithCustomPath(path string, format string, v ...interface{}) {
-	file, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	// Set log output to the file
-	log.SetOutput(file)
-
-	// // Remove the default date and time from the go log output
-	// log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
-
-	// Log a message with a formatted string
-	log.Printf(format, v...)
-
-}
-
 func WriteBreakToFile() {
 	file, err := os.OpenFile("log_new.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
@@ -116,6 +116,25 @@ func WriteBreakToFileEvaluate() {
 	log.Println()
 	log.Println()
 	// log.Println("============================================================================")
+
+}
+
+func WriteBreakToFileWithCustomPath(path string) {
+	file, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	// Set log output to the file
+	log.SetOutput(file)
+
+	// Remove the default date and time from the go log output
+	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
+
+	// Log a message with a formatted string
+	log.Println()
+	log.Println("============================================================================")
 
 }
 
