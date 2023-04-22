@@ -5,12 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"math/big"
-	"net"
-	"net/http"
 
-	urlNet "net/url"
+	//urlNet "net/url"
 
 	"sync"
 	"time"
@@ -53,46 +50,10 @@ type CommonTransaction interface {
 
 // Original
 // NewEVMClient creates a client for EVMChain with provided signer
-// func NewEVMClient(url string, signer Signer) (*EVMClient, error) {
-// 	rpcClient, err := rpc.DialContext(context.TODO(), url)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	c := &EVMClient{}
-// 	c.Client = ethclient.NewClient(rpcClient)
-// 	c.gethClient = gethclient.New(rpcClient)
-// 	c.rpClient = rpcClient
-// 	c.signer = signer
-// 	return c, nil
-// }
-
-// Tor integrated
-// // NewEVMClient creates a client for EVMChain with provided signer
 func NewEVMClient(url string, signer Signer) (*EVMClient, error) {
-	customizedTransport := &http.Transport{
-		// Proxy: ProxyFromEnvironment,
-		Proxy: func(req *http.Request) (*urlNet.URL, error) {
-			// return urlNet.Parse("socks5://127.0.0.1:9151")
-			return urlNet.Parse("socks5://K2b7xpcdHbiKRIj:Du5c0PFEyjXb8ev@193.151.180.158:58684")
-		},
-		DialContext: (&net.Dialer{
-			Timeout:   30 * time.Second,
-			KeepAlive: 30 * time.Second,
-		}).DialContext,
-		ForceAttemptHTTP2:     true,
-		MaxIdleConns:          100,
-		IdleConnTimeout:       90 * time.Second,
-		TLSHandshakeTimeout:   10 * time.Second,
-		ExpectContinueTimeout: 1 * time.Second,
-	}
-
-	rpcClient, err := rpc.DialHTTPWithClient(url, &http.Client{
-		Transport: customizedTransport,
-		Timeout:   30 * time.Second,
-	})
+	rpcClient, err := rpc.DialContext(context.TODO(), url)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	c := &EVMClient{}
@@ -102,6 +63,42 @@ func NewEVMClient(url string, signer Signer) (*EVMClient, error) {
 	c.signer = signer
 	return c, nil
 }
+
+// Tor integrated
+// // NewEVMClient creates a client for EVMChain with provided signer
+// func NewEVMClient(url string, signer Signer) (*EVMClient, error) {
+// 	customizedTransport := &http.Transport{
+// 		// Proxy: ProxyFromEnvironment,
+// 		Proxy: func(req *http.Request) (*urlNet.URL, error) {
+// 			// return urlNet.Parse("socks5://127.0.0.1:9151")
+// 			return urlNet.Parse("socks5://K2b7xpcdHbiKRIj:Du5c0PFEyjXb8ev@193.151.180.158:58684")
+// 		},
+// 		DialContext: (&net.Dialer{
+// 			Timeout:   30 * time.Second,
+// 			KeepAlive: 30 * time.Second,
+// 		}).DialContext,
+// 		ForceAttemptHTTP2:     true,
+// 		MaxIdleConns:          100,
+// 		IdleConnTimeout:       90 * time.Second,
+// 		TLSHandshakeTimeout:   10 * time.Second,
+// 		ExpectContinueTimeout: 1 * time.Second,
+// 	}
+
+// 	rpcClient, err := rpc.DialHTTPWithClient(url, &http.Client{
+// 		Transport: customizedTransport,
+// 		Timeout:   30 * time.Second,
+// 	})
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	c := &EVMClient{}
+// 	c.Client = ethclient.NewClient(rpcClient)
+// 	c.gethClient = gethclient.New(rpcClient)
+// 	c.rpClient = rpcClient
+// 	c.signer = signer
+// 	return c, nil
+// }
 
 func (c *EVMClient) SubscribePendingTransactions(ctx context.Context, ch chan<- common.Hash) (*rpc.ClientSubscription, error) {
 	return c.gethClient.SubscribePendingTransactions(ctx, ch)

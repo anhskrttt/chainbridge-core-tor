@@ -1,0 +1,66 @@
+# Copyright 2020 ChainSafe Systems
+# SPDX-License-Identifier: LGPL-3.0-only
+version: '3'
+
+services:
+  tor:
+    container_name: tor-service
+    image: osminogin/tor-simple
+    ports:
+      - "9050:9050"
+    volumes:
+      - tor-data:/data
+    restart: always
+
+  relayer1:
+    container_name: relayer1-norm
+    build:
+      context: ../.
+      dockerfile: ./docker/Dockerfile.bridge
+    command:
+      run --config /cfg/config_evm-evm_1.json --latest
+    volumes:
+      - ./cfg/:/cfg
+    restart: always
+
+  relayer2:
+    container_name: relayer2-tor
+    build:
+      context: ../.
+      dockerfile: ./docker/Dockerfile.bridge
+    command:
+      run --config /cfg/config_evm-evm_2.json --latest
+    volumes:
+      - ./cfg:/cfg
+    restart: always
+    depends_on:
+      - tor
+    environment:
+      - http_proxy=socks5://tor-service:9050
+      - https_proxy=socks5://tor-service:9050
+
+  relayer3:
+    container_name: relayer3-proxy
+    build:
+      context: ../.
+      dockerfile: ./docker/Dockerfile.bridge
+    command:
+      run --config /cfg/config_evm-evm_3.json --latest
+    volumes:
+      - ./cfg/:/cfg
+    restart: always
+    environment:
+      - http_proxy=socks5://khubmomd:8jy0lxt2nnfl@209.35.4.10:5401
+      - https_proxy=socks5://khubmomd:8jy0lxt2nnfl@209.35.4.10:5401
+
+  # otel-collector:
+  #   container_name: otel-collector
+  #   image: otel/opentelemetry-collector
+  #   command: ["--config=/etc/otel-collector-config.yml"]
+  #   volumes:
+  #     - ./cfg/otel-collector-config.yml:/etc/otel-collector-config.yml
+  #   ports:
+  #     - "8889:8889"   # Prometheus exporter metrics
+
+volumes:
+  tor-data:

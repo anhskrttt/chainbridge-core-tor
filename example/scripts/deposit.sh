@@ -6,6 +6,7 @@ cd ..
 # source config.env file
 source config.env
 
+# Deposit 1 wei
 # run command multiple times
 for i in {1..100}; do
   echo "i: $i"
@@ -13,7 +14,7 @@ for i in {1..100}; do
   --url $SRC_GATEWAY \
   --private-key $USER_1_PRIVATE_KEY \
   --gas-price 25000000000 \
-  --amount 0.0000000000000001 \
+  --amount 0.00000000000000001 \
   --domain 1 \
   --bridge $SRC_BRIDGE \
   --recipient $USER_1_ADDR \

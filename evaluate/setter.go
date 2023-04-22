@@ -102,10 +102,10 @@ func SetCurrDepositHash(value string) {
 
 func SetTStep1(rpcID int64, value time.Duration) {
 	// WriteToFileWithCustomPath("S1: %d\n", uint64(value.Milliseconds()))
-	WriteToFileWithCustomPath("./../evaluate-logs/log.txt", "S1 %d %d\n", rpcID, uint64(value.Milliseconds()))
+	WriteToFileWithCustomPath("log-step.txt", "S1 %d %d\n", rpcID, uint64(value.Milliseconds()))
 }
 
 func SetTStep2(value time.Duration) {
 	// WriteToFileWithCustomPath("S1: %d\n", uint64(value.Milliseconds()))
-	WriteToFileWithCustomPath("./../evaluate-logs/log.txt", "S2 %d %d\n", -1, uint64(value.Milliseconds()))
+	WriteToFileWithCustomPath("log-step.txt", "S2 %d %d\n", -1, uint64(value.Milliseconds()))
 }
